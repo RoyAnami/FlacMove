@@ -74,7 +74,7 @@ namespace FlacMove
                 richTextBox1.AppendText("Aドライブにファイルが格納されました\r\n");
                 richTextBox1.Update();
             }
-            catch (System.IO.FileNotFoundException) 
+            catch (System.IO.FileNotFoundException) //ファイルが足りないときにメッセージを出す
             {
                 MessageBox.Show("ファイルが足りません", "Caution");
                 return;
