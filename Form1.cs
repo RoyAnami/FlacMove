@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace FlacMove
 {
@@ -61,7 +62,9 @@ namespace FlacMove
             richTextBox1.Update();
             System.IO.FileInfo fi_flac = new System.IO.FileInfo(@"B:\" + fNameOrigin + ".flac");
             System.IO.FileInfo fi_cue = new System.IO.FileInfo(@"B:\" + fNameOrigin + ".cue");
+            ResizeX(@"B:\Folder.jpg");
             System.IO.FileInfo fi_albumart = new System.IO.FileInfo(@"B:\Folder.jpg");
+            
 
             //Aドライブにコピー
             string ADirectory = @"A:\Music\flac\" + musicianName + "\\" + albumName + "\\";
@@ -107,6 +110,39 @@ namespace FlacMove
             }
             System.IO.File.Delete(@"B:\" + fNameOrigin + ".wav");
             richTextBox1.AppendText("★すべてのプロセスが終了しました☆\r\n");
+        }
+
+        private void ResizeX(string imageFile)
+        {
+            int imageWidth;
+            int imageHeight;
+            int width;
+            float height;
+
+            using (Image image = Image.FromFile(imageFile))
+            {
+                imageWidth = image.Width;
+                if (imageWidth <= 300)
+                {
+                    return;
+                }
+                imageHeight = image.Height;
+                width = 300;
+                height = (float)imageHeight / (float)imageWidth * 300;
+
+                // サイズ変更した画像を作成する
+                using (Bitmap bitmap = new Bitmap(width, (int)height))
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    // サイズ変更した画像に、左上を起点に変更する画像を描画する
+                    graphics.DrawImage(image, 0, 0, width, height);
+
+                    // サイズ変更した画像を保存する
+                    bitmap.Save(@"B:\tmp.jpg", ImageFormat.Jpeg);
+                }                
+            }
+            File.Delete(imageFile);
+            File.Move(@"B:\tmp.jpg", imageFile);
         }
     }
 }
