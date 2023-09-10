@@ -64,6 +64,7 @@ namespace FlacMove
             System.IO.FileInfo fi_cue = new System.IO.FileInfo(@"B:\" + fNameOrigin + ".cue");
             ResizeX(@"B:\Folder.jpg");
             System.IO.FileInfo fi_albumart = new System.IO.FileInfo(@"B:\Folder.jpg");
+            System.IO.FileInfo fi_albumartPNG = new System.IO.FileInfo(@"B:\Folder.png");
             
 
             //Aドライブにコピー
@@ -74,6 +75,7 @@ namespace FlacMove
                 fi_flac.CopyTo(@"A:\Music\flac\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".flac", true);
                 fi_cue.CopyTo(@"A:\Music\flac\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".cue", true);
                 fi_albumart.CopyTo(@"A:\Music\flac\" + musicianName + "\\" + albumName + "\\Folder.jpg", true);
+                fi_albumartPNG.CopyTo(@"A:\Music\flac\" + musicianName + "\\" + albumName + "\\Folder.png", true);
                 richTextBox1.AppendText("Aドライブにファイルが格納されました\r\n");
                 richTextBox1.Update();
             }
@@ -89,6 +91,7 @@ namespace FlacMove
             fi_flac.CopyTo(@"B:\_Music\flac\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".flac", true);
             fi_cue.CopyTo(@"B:\_Music\flac\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".cue", true);
             fi_albumart.CopyTo(@"B:\_Music\flac\" + musicianName + "\\" + albumName + "\\Folder.jpg", true);
+            fi_albumartPNG.CopyTo(@"B:\_Music\flac\" + musicianName + "\\" + albumName + "\\Folder.png", true);
             richTextBox1.AppendText("Bドライブにファイルが格納されました\r\n");
             richTextBox1.Update();
             //Bドライブ直下にコピー(mp3に変換、iTunesに登録しやすいように)
@@ -99,6 +102,7 @@ namespace FlacMove
                 fi_flac.MoveTo(@"B:\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".flac");
                 fi_cue.MoveTo(@"B:\" + musicianName + "\\" + albumName + "\\" + fNameOrigin + ".cue");
                 fi_albumart.MoveTo(@"B:\" + musicianName + "\\" + albumName + "\\Folder.jpg");
+                fi_albumartPNG.Delete();
                 richTextBox1.AppendText("Bドライブ直下にファイルが格納されました\r\n");
                 richTextBox1.Update();
             }
@@ -107,6 +111,7 @@ namespace FlacMove
                 fi_flac.Delete();
                 fi_cue.Delete();
                 fi_albumart.Delete();
+                fi_albumartPNG.Delete();
             }
             System.IO.File.Delete(@"B:\" + fNameOrigin + ".wav");
             richTextBox1.AppendText("★すべてのプロセスが終了しました☆\r\n");
@@ -122,13 +127,16 @@ namespace FlacMove
             using (Image image = Image.FromFile(imageFile))
             {
                 imageWidth = image.Width;
-                if (imageWidth <= 300)
-                {
-                    return;
-                }
                 imageHeight = image.Height;
                 width = 300;
-                height = (float)imageHeight / (float)imageWidth * 300;
+                if (imageWidth > 300)
+                {
+                    height = (float)imageHeight / (float)imageWidth * 300;
+                }
+                else
+                {
+                    height = imageHeight;
+                }
 
                 // サイズ変更した画像を作成する
                 using (Bitmap bitmap = new Bitmap(width, (int)height))
@@ -139,6 +147,7 @@ namespace FlacMove
 
                     // サイズ変更した画像を保存する
                     bitmap.Save(@"B:\tmp.jpg", ImageFormat.Jpeg);
+                    bitmap.Save(@"B:\Folder.png", ImageFormat.Png);
                 }                
             }
             File.Delete(imageFile);
